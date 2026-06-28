@@ -111,16 +111,23 @@ provides_hooks:
 ```python
 import os
 import subprocess
+import sys
 
 # ── Configure this ──────────────────────────────────────────
 # Point to your .wav file. Examples:
-#   Pack sound:  r"~\.claude\hooks\peon-ping\packs\ra2_eva_commander\sounds\construction-complete.wav"
+#   Pack sound:  r"~\.claude\hooks\peon-ping\packs
+a2_eva_commander\sounds\construction-complete.wav"
 #   Custom:      r"C:\Users\me\sounds\my-sound.wav"
 #   macOS/Linux: "~/.claude/hooks/peon-ping/packs/ra2_eva_commander/sounds/construction-complete.wav"
 _SOUND_PATH = os.path.expanduser(
-    r"~\.claude\hooks\peon-ping\packs\ra2_eva_commander\sounds\construction-complete.wav"
+    r"~\.claude\hooks\peon-ping\packs
+a2_eva_commander\sounds\construction-complete.wav"
 )
 # ─────────────────────────────────────────────────────────────
+
+# Suppress console window on Windows (ffplay.exe is a console-subsystem app)
+_CREATE_NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
+_HIDE_FLAGS = {"creationflags": _CREATE_NO_WINDOW} if _CREATE_NO_WINDOW else {}
 
 # Resolve ffplay at import time
 _FFPLAY_PATH = None
@@ -135,7 +142,7 @@ _candidates = [
 for c in _candidates:
     try:
         subprocess.run([c, "-version"], stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL, timeout=3)
+                       stderr=subprocess.DEVNULL, timeout=3, **_HIDE_FLAGS)
         _FFPLAY_PATH = c
         break
     except (FileNotFoundError, subprocess.TimeoutExpired):
@@ -149,6 +156,7 @@ def _play() -> None:
         subprocess.Popen(
             [_FFPLAY_PATH, "-nodisp", "-autoexit", _SOUND_PATH],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            **_HIDE_FLAGS,
         )
     except Exception:
         pass

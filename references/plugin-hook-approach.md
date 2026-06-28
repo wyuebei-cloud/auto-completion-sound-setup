@@ -44,11 +44,17 @@ provides_hooks:
 ### `$HERMES_HOME/plugins/construction-complete/__init__.py`
 
 ```python
-import os, subprocess
+import os, subprocess, sys
 
 _SOUND_PATH = os.path.expanduser(
-    r"~\.claude\hooks\peon-ping\packs\ra2_eva_commander\sounds\construction-complete.wav"
+    r"~\.claude\hooks\peon-ping\packs
+a2_eva_commander\sounds\construction-complete.wav"
 )
+
+# Suppress console window on Windows (ffplay.exe is a console-subsystem app)
+_CREATE_NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
+_HIDE_FLAGS = {"creationflags": _CREATE_NO_WINDOW} if _CREATE_NO_WINDOW else {}
+
 _FFPLAY = "ffplay"  # resolve at import time
 
 
@@ -59,6 +65,7 @@ def _play() -> None:
         subprocess.Popen(
             [_FFPLAY, "-nodisp", "-autoexit", _SOUND_PATH],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            **_HIDE_FLAGS,
         )
     except Exception:
         pass
