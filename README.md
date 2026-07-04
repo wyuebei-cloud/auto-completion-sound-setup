@@ -1,5 +1,7 @@
 # Auto Completion Sound Setup
 
+[![skills.sh](https://skills.sh/b/wyuebei-cloud/auto-completion-sound-setup)](https://skills.sh/wyuebei-cloud/auto-completion-sound-setup)
+
 > Hermes Agent skill: automatic completion sound after every final response — zero LLM involvement, R5 compliant.
 
 **One-time setup:**
